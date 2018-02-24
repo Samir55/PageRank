@@ -11,13 +11,13 @@ public class Ranker {
     private Integer pagesCount;
 
     /* The Graph adjacency list */
-    private HashMap<Integer, ArrayList<Integer>> adjacencyList = new HashMap<Integer, ArrayList<Integer>>();
+    private HashMap<Integer, ArrayList<Integer>> inList = new HashMap<Integer, ArrayList<Integer>>();
 
     /* The out degrees of each page */
     private ArrayList<Integer> outDegrees;
 
     /* The ranks of the pages */
-    private ArrayList<Integer> pagesRank;
+    private ArrayList<Double> pagesRank;
 
     /* The dumping factor */
     private final Double alpha = 0.85;
@@ -26,12 +26,12 @@ public class Ranker {
     private final Integer maxIterations = 100;
 
     private void addArc(int from, int to) {
-        if (adjacencyList.containsKey(from)) {
-            adjacencyList.get(from).add(to);
+        if (inList.containsKey(to)) {
+            inList.get(to).add(from);
         } else {
             ArrayList<Integer> newList = new ArrayList<Integer>();
-            newList.add(to);
-            adjacencyList.put(from, newList);
+            newList.add(from);
+            inList.put(to, newList);
         }
         outDegrees.set(from, outDegrees.get(from) + 1);
     }
@@ -40,11 +40,11 @@ public class Ranker {
         this.pagesCount = pagesCount;
 
         outDegrees = new ArrayList<Integer>();
-        pagesRank = new ArrayList<Integer>();
+        pagesRank = new ArrayList<Double>();
 
         for (int i = 0; i < pagesCount; i++) {
             outDegrees.add(0);
-            pagesRank.add(0);
+            pagesRank.add(1.0/pagesCount);
         }
     }
 
@@ -72,10 +72,29 @@ public class Ranker {
             System.err.println("Error: " + e.getMessage());
         }
 
+        debugging();
     }
 
     public void rankPages() {
-        
+        // ToDo: @Samir55 Get the root page.
+
+        // Check whether the node is dampling node or not.
+
+        // Loop over all pages
+        for (int page = 0; page < pagesCount; page++) {
+
+            Double h_page = 0.0;
+            if (inList.containsKey(page)) {
+                for (Integer from : inList.get(page)) {
+                    h_page += (1.0 * pagesRank.get(from) / outDegrees.get(from));
+                }
+                h_page *= alpha; // Multiply by dumping factor.
+            }
+
+//            Double ;
+
+            pagesRank.set(page, (h_page));
+        }
 
     }
 
@@ -83,10 +102,10 @@ public class Ranker {
     private void debugging() {
         System.out.println("The saved edges printing");
 
-        for (Integer vertex : adjacencyList.keySet()) {
+        for (Integer vertex : inList.keySet()) {
             System.out.println("For the vertex " + vertex.toString());
             System.out.println("OutDegrees " + outDegrees.get(vertex).toString());
-            for (Integer to : adjacencyList.get(vertex)) {
+            for (Integer to : inList.get(vertex)) {
                 System.out.print(to.toString() + " ");
             }
             System.out.println();
