@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="671d2aa4-166b-42f0-9e2a-ec792e0c932e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/com/SearchEngine/Ranker/Main.java" afterPath="$PROJECT_DIR$/src/com/SearchEngine/Ranker/Main.java" />
       <change beforePath="$PROJECT_DIR$/src/com/SearchEngine/Ranker/Ranker.java" afterPath="$PROJECT_DIR$/src/com/SearchEngine/Ranker/Ranker.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -28,8 +27,8 @@
       <file leaf-file-name="input.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/SearchEngine/Ranker/input.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1080">
-              <caret line="72" column="0" lean-forward="true" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+            <state relative-caret-position="0">
+              <caret line="0" column="2" lean-forward="false" selection-start-line="0" selection-start-column="2" selection-end-line="0" selection-end-column="2" />
               <folding />
             </state>
           </provider>
@@ -38,15 +37,14 @@
       <file leaf-file-name="Ranker.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/SearchEngine/Ranker/Ranker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="113">
-              <caret line="132" column="58" lean-forward="true" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
+            <state relative-caret-position="-241">
+              <caret line="62" column="44" lean-forward="true" selection-start-line="62" selection-start-column="44" selection-end-line="62" selection-end-column="44" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#349#378#0" expanded="true" />
-                <element signature="method#addArc#0;class#Ranker#0" expanded="false" />
-                <element signature="method#initializeLists#0;class#Ranker#0" expanded="false" />
-                <element signature="e#1278#1287#0" expanded="true" />
-                <element signature="method#readFile#0;class#Ranker#0" expanded="false" />
+                <element signature="e#377#406#0" expanded="true" />
+                <element signature="e#1253#1262#0" expanded="true" />
+                <element signature="method#rankPages#0;class#Ranker#0" expanded="false" />
+                <element signature="method#debugging#0;class#Ranker#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -80,9 +78,9 @@
       <find>init</find>
       <find>Here</find>
       <find>debuggin</find>
-      <find>_</find>
       <find>printPR</find>
       <find>pageRankMagnitude</find>
+      <find>_</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -100,8 +98,8 @@
         <option value="$PROJECT_DIR$/src/com/SearchEngine/Main.java" />
         <option value="$PROJECT_DIR$/src/com/SearchEngine/Ranker.java" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/src/com/SearchEngine/Ranker/input.txt" />
         <option value="$PROJECT_DIR$/src/com/SearchEngine/Ranker/Main.java" />
+        <option value="$PROJECT_DIR$/src/com/SearchEngine/Ranker/input.txt" />
         <option value="$PROJECT_DIR$/src/com/SearchEngine/Ranker/Ranker.java" />
       </list>
     </option>
@@ -113,7 +111,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="12" />
+    <option name="x" value="9" />
     <option name="y" value="23" />
     <option name="width" value="1260" />
     <option name="height" value="734" />
@@ -232,15 +230,15 @@
       <option name="presentableId" value="Default" />
       <updated>1519244844457</updated>
       <workItem from="1519244847851" duration="1461000" />
-      <workItem from="1519318770155" duration="23907000" />
+      <workItem from="1519318770155" duration="25827000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25368000" />
+    <option name="totallyTimeSpent" value="27288000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="12" y="23" width="1260" height="734" extended-state="0" />
+    <frame x="9" y="23" width="1260" height="734" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -263,7 +261,7 @@
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39879155" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -279,7 +277,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="2" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -297,11 +297,10 @@
           <caret line="2" column="21" lean-forward="true" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#349#378#0" expanded="true" />
-            <element signature="method#addArc#0;class#Ranker#0" expanded="false" />
-            <element signature="method#initializeLists#0;class#Ranker#0" expanded="false" />
-            <element signature="e#1278#1287#0" expanded="true" />
-            <element signature="method#readFile#0;class#Ranker#0" expanded="false" />
+            <element signature="e#377#406#0" expanded="true" />
+            <element signature="e#1253#1262#0" expanded="true" />
+            <element signature="method#rankPages#0;class#Ranker#0" expanded="false" />
+            <element signature="method#debugging#0;class#Ranker#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -325,25 +324,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pageranks.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/SearchEngine/Ranker/input.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="72" column="0" lean-forward="true" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="0" column="2" lean-forward="false" selection-start-line="0" selection-start-column="2" selection-end-line="0" selection-end-column="2" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/SearchEngine/Ranker/Ranker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="113">
-          <caret line="132" column="58" lean-forward="true" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
+        <state relative-caret-position="-241">
+          <caret line="62" column="44" lean-forward="true" selection-start-line="62" selection-start-column="44" selection-end-line="62" selection-end-column="44" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#349#378#0" expanded="true" />
-            <element signature="method#addArc#0;class#Ranker#0" expanded="false" />
-            <element signature="method#initializeLists#0;class#Ranker#0" expanded="false" />
-            <element signature="e#1278#1287#0" expanded="true" />
-            <element signature="method#readFile#0;class#Ranker#0" expanded="false" />
+            <element signature="e#377#406#0" expanded="true" />
+            <element signature="e#1253#1262#0" expanded="true" />
+            <element signature="method#rankPages#0;class#Ranker#0" expanded="false" />
+            <element signature="method#debugging#0;class#Ranker#0" expanded="false" />
           </folding>
         </state>
       </provider>

@@ -2,6 +2,7 @@ package com.SearchEngine.Ranker;
 
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,9 +34,7 @@ public class Ranker {
     }
 
     /* Initialize all vectors */
-    private void initializeLists(int pagesCount) {
-        this.pagesCount = pagesCount;
-
+    private void initializeLists() {
         outDegrees = new ArrayList<Integer>();
         pagesRank = new ArrayList<Double>();
 
@@ -50,12 +49,15 @@ public class Ranker {
         }
     }
 
+    /* Read edges list from a file */
     private void readFile(String filePath) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String strLine;
 
-            initializeLists(50);
+            this.pagesCount = Integer.parseInt(strLine = br.readLine().trim().split(" ")[0]);
+
+            initializeLists();
 
             // Read file line by line
             while ((strLine = br.readLine()) != null) {
@@ -73,33 +75,27 @@ public class Ranker {
         }
     }
 
+    /* PageRank calculations */
     private void rankPages() {
+        Double danglingSum, pagesRankSum = 1.0;
+
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            Double danglingSum, pagesRankSum = 0.0;
-
-            for (int page = 0; page < pagesCount; page++) {
-                pagesRankSum += pagesRank.get(page);
-            }
-
-            // Normalize the PR(i) needed for the power method calculations
-            for (int page = 0; page < pagesCount; page++) {
-                Double rank = pagesRank.get(page);
-                pagesRank.set(page, rank * 1.0 / pagesRankSum);
-            }
-
-            pagesRankSum = 0.0;
             danglingSum = 0.0;
 
-            for (int page = 0; page < pagesCount; page++) {
-                if (outDegrees.get(page) == 0)
-                    danglingSum += pagesRank.get(page);
-                pagesRankSum += pagesRank.get(page);
-            }
+            // Normalize the PR(i) needed for the power method calculations
+            if (iteration > 0)
+                for (int page = 0; page < pagesCount; page++) {
+                    Double rank = pagesRank.get(page) * 1.0 / pagesRankSum;
+                    pagesRank.set(page, rank);
+                    if (outDegrees.get(page) == 0) {
+                        danglingSum += rank;
+                    }
+                }
 
-            System.out.println("PageRankSum " + pagesRankSum.toString() + ", DanglingSum " + danglingSum.toString());
+            pagesRankSum = 0.0;
 
             Double aPage = alpha * danglingSum * (1.0 / pagesCount); // Same for all pages
-            Double oneProb = (1.0 - alpha) * (1.0 / pagesCount) * 1; // Same for all pages
+            Double oneProb = (1.0 - alpha) * (1.0 / pagesCount) * 1.0; // Same for all pages
 
             // Loop over all pages
             for (int page = 0; page < pagesCount; page++) {
@@ -113,7 +109,8 @@ public class Ranker {
                     hPage *= alpha; // Multiply by dumping factor.
                 }
 
-                pagesRank.set(page, (hPage + aPage + oneProb));
+                pagesRank.set(page, hPage + aPage + oneProb);
+                pagesRankSum += hPage + aPage + oneProb;
             }
         }
     }
@@ -138,6 +135,7 @@ public class Ranker {
         }
     }
 
+    /* Print page ranks */
     private void printPR() {
         Double checkSum = 0.0;
         for (Integer page = 0; page < pagesCount; page++) {
@@ -147,13 +145,21 @@ public class Ranker {
         System.out.println("checkSum = " + checkSum.toString());
     }
 
+    /* Save page ranks to a file*/
     private void savePR() {
-
+        try (PrintWriter out = new PrintWriter("pageranks.txt")) {
+            for (Integer page = 0; page < pagesCount; page++) {
+                out.println(page.toString() + " = " + pagesRank.get(page));
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void run(String filePath) {
         readFile(filePath);
         rankPages();
         printPR();
+        savePR();
     }
 }
