@@ -127,7 +127,7 @@ public class Ranker {
 
     /* Save page ranks to a file*/
     private void savePR() {
-        try (PrintWriter out = new PrintWriter("pageranks.txt")) {
+        try (PrintWriter out = new PrintWriter("Output/pageranks.txt")) {
             for (Integer page = 0; page < pagesCount; page++) {
                 out.println(page.toString() + " = " + pagesRank.get(page));
             }
