@@ -50,12 +50,12 @@ public class Ranker {
         }
     }
 
-    public void readFile(String filePath) {
+    private void readFile(String filePath) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String strLine;
 
-            initializeLists(5000);
+            initializeLists(50);
 
             // Read file line by line
             while ((strLine = br.readLine()) != null) {
@@ -66,22 +66,29 @@ public class Ranker {
 
                 // Add arcs
                 this.addArc(u, v);
-
-                System.out.println(u.toString() + " " + v.toString());
             }
         } catch (Exception e) {
             //Catch exception if any
             System.err.println("Error: " + e.getMessage());
         }
-
-        debugging();
     }
 
-    public void rankPages() {
-
+    private void rankPages() {
         for (int iteration = 0; iteration < maxIterations; iteration++) {
+            Double danglingSum, pagesRankSum = 0.0;
 
-            Double danglingSum = 0.0, pagesRankSum = 0.0;
+            for (int page = 0; page < pagesCount; page++) {
+                pagesRankSum += pagesRank.get(page);
+            }
+
+            // Normalize the PR(i) needed for the power method calculations
+            for (int page = 0; page < pagesCount; page++) {
+                Double rank = pagesRank.get(page);
+                pagesRank.set(page, rank * 1.0 / pagesRankSum);
+            }
+
+            pagesRankSum = 0.0;
+            danglingSum = 0.0;
 
             for (int page = 0; page < pagesCount; page++) {
                 if (outDegrees.get(page) == 0)
@@ -89,13 +96,10 @@ public class Ranker {
                 pagesRankSum += pagesRank.get(page);
             }
 
-            // Normalize the PR(i) needed for the power method
-            for (int page = 0; page < pagesCount; page++) {
-                pagesRank.set(page, pagesRank.get(page) / pagesRankSum);
-            }
+            System.out.println("PageRankSum " + pagesRankSum.toString() + ", DanglingSum " + danglingSum.toString());
 
-            Double aPage = alpha * danglingSum / pagesRankSum * 1 / pagesCount; // Same for all pages
-            Double boredProb = (1 - alpha) * (1 / pagesCount) * 1; // Same for all pages
+            Double aPage = alpha * danglingSum * (1.0 / pagesCount); // Same for all pages
+            Double oneProb = (1.0 - alpha) * (1.0 / pagesCount) * 1; // Same for all pages
 
             // Loop over all pages
             for (int page = 0; page < pagesCount; page++) {
@@ -104,12 +108,12 @@ public class Ranker {
 
                 if (inList.containsKey(page)) {
                     for (Integer from : inList.get(page)) {
-                        hPage += (1.0 * pagesRank.get(from) / outDegrees.get(from));
+                        hPage += (1.0 * pagesRank.get(from) / (1.0 * outDegrees.get(from)));
                     }
                     hPage *= alpha; // Multiply by dumping factor.
                 }
 
-                pagesRank.set(page, (hPage + aPage + boredProb));
+                pagesRank.set(page, (hPage + aPage + oneProb));
             }
         }
     }
@@ -134,4 +138,22 @@ public class Ranker {
         }
     }
 
+    private void printPR() {
+        Double checkSum = 0.0;
+        for (Integer page = 0; page < pagesCount; page++) {
+            checkSum += pagesRank.get(page);
+            System.out.println(page.toString() + " = " + pagesRank.get(page));
+        }
+        System.out.println("checkSum = " + checkSum.toString());
+    }
+
+    private void savePR() {
+
+    }
+
+    public void run(String filePath) {
+        readFile(filePath);
+        rankPages();
+        printPR();
+    }
 }
