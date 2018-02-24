@@ -115,26 +115,6 @@ public class Ranker {
         }
     }
 
-    // Debugging @Samir55
-    private void debugging() {
-        System.out.println("The saved edges printing");
-        System.out.println("===========================================");
-        for (Integer vertex : inList.keySet()) {
-            System.out.println("For the vertex " + vertex.toString());
-            System.out.println("OutDegrees " + outDegrees.get(vertex).toString());
-            System.out.println("Vertices pointing to this vertex ");
-            if (inList.get(vertex).isEmpty()) {
-                System.out.println("nil");
-            } else {
-                for (Integer to : inList.get(vertex)) {
-                    System.out.print(to.toString() + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("===========================================");
-        }
-    }
-
     /* Print page ranks */
     private void printPR() {
         Double checkSum = 0.0;
