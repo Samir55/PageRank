@@ -2,4 +2,4 @@
 
 
 # Todo:
-* Implement a vectorized version in**CUDA.**
+* Implement a vectorized version in **CUDA.**
