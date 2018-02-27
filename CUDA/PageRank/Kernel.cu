@@ -8,6 +8,8 @@
 #include "Kernel.h"
 
 namespace PageRank {
+
+// A Kernel for multiplying square matrices.
 __global__ void matrix_mul(Matrix d_a, Matrix d_b, Matrix d_c) {
 	double c_element = 0.0;
 	int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -21,12 +23,9 @@ __global__ void matrix_mul(Matrix d_a, Matrix d_b, Matrix d_c) {
 }
 
 Kernel::Kernel() {
-	// TODO Auto-generated constructor stub
-
 }
 
 Kernel::~Kernel() {
-	// TODO Auto-generated destructor stub
 }
 
 void Kernel::run_kernel(Matrix d_a, Matrix d_b, Matrix d_c) { 
@@ -34,6 +33,10 @@ void Kernel::run_kernel(Matrix d_a, Matrix d_b, Matrix d_c) {
 	{
 		matrix_mul<<<gridSize, blockSize>>>(d_a, d_b, d_c);
 	}
+}
+
+void allocate_memory() {
+	
 }
 
 } /* namespace PageRank */
