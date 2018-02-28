@@ -8,29 +8,36 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_
 
+#include <iostream>
+#include <string>
+#include <stdio.h>
+
+using namespace std;
+
 #define GRID_COLS 200
 #define GRID_ROWS 200
 #define BLOCK_ROWS 25
 #define BLOCK_COLS 25
 
+typedef double* Matrix;
+
 namespace PageRank {
 
-typedef int* Matrix;
-
 class Kernel {
+private:
+	int max_iterations;
+	int n;
+	Matrix d_a;
+	Matrix d_b;
+	Matrix d_c;
+
 public:
-	static int const max_iterations;
-	static int const n = 5000;
-	static int const m = 5000;
+	Kernel(int iterations, int n) : max_iterations(iterations), n(n) {}
+	virtual ~Kernel() {}
 
-	dim3 dimGrid(GRID_ROWS, GRID_COLS);
-    dim3 dimBlock(BLOCK_ROWS, BLOCK_COLS);
-
-	Kernel();
-	virtual ~Kernel();
-
-	static void allocate_memory();
-	static void run_kernel() {}
+	void allocate_matrices(Matrix h_a, Matrix h_b);
+	void run_kernel();
+	Matrix get_result();
 };
 
 } /* namespace PageRank */
