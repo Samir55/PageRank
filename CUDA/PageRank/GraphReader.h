@@ -11,6 +11,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <cstring>
 
 using namespace std;
 typedef double* Matrix;
@@ -21,9 +23,13 @@ class GraphReader {
 public:
 	GraphReader();
 
+	static int *out_degrees;
+
 	static vector< vector<int> > read_graph(string path);
 
-	static Matrix construct_h_matrix(vector< vector<int> > &edgesList);
+	static Matrix construct_h_matrix(vector< vector<int> > &edgesList, Matrix g_matrix, Matrix i_vector, int* out_degrees);
+
+	static void free_resources();
 
 	virtual ~GraphReader();
 };
