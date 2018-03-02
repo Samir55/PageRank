@@ -2,41 +2,121 @@
  * Kernel.cpp
  *
  *  Created on: Feb 27, 2018
- *      Author: ahmedsamir
+ *      Author: Ahmed Samir
  */
 
 #include "Kernel.h"
 
 namespace PageRank {
 
+/* PageRank calculations
+    private void rankPages() {
+        Double danglingSum, pagesRankSum = 1.0;
+
+        for (int iteration = 0; iteration < maxIterations; iteration++) {
+            danglingSum = 0.0;
+
+            // Normalize the PR(i) needed for the power method calculations
+            if (iteration > 0)
+                for (int page = 0; page < pagesCount; page++) {
+                    Double rank = pagesRank.get(page) * 1.0 / pagesRankSum;
+                    pagesRank.set(page, rank);
+                    if (outDegrees.get(page) == 0) {
+                        danglingSum += rank;
+                    }
+                }
+
+            pagesRankSum = 0.0;
+
+            Double aPage = alpha * danglingSum * (1.0 / pagesCount); // Same for all pages
+            Double oneProb = (1.0 - alpha) * (1.0 / pagesCount) * 1.0; // Same for all pages
+
+            // Loop over all pages
+            for (int page = 0; page < pagesCount; page++) {
+
+                Double hPage = 0.0;
+
+                if (inList.containsKey(page)) {
+                    for (Integer from : inList.get(page)) {
+                        hPage += (1.0 * pagesRank.get(from) / (1.0 * outDegrees.get(from)));
+                    }
+                    hPage *= alpha; // Multiply by dumping factor.
+                }
+
+                pagesRank.set(page, hPage + aPage + oneProb);
+                pagesRankSum += hPage + aPage + oneProb;
+            }
+        }
+}
+*/
+
 // A Kernel for multiplying square matrices.
-__global__ void matrix_mul(Matrix d_a, Matrix d_b, Matrix d_c) {
+__global__ void matrix_mul(Matrix d_a, Matrix d_b, Matrix d_c, int n) {
 	double c_element = 0.0;
-	int row = blockIdx.y * blockDim.y + threadIdx.y;
-	int col = blockIdx.x * blockDim.x + threadIdx.x;
-	if (row < n && col < m) {
-	for (int i = 0; i < n; i++) {
-		c_element += (d_a[row * n + i] * d_b[i * n + col]);
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < n) {
+		for (int i = 0; i < n; i++) {
+			c_element += (d_a[idx * n + i] * d_b[i]);
+		}
+		d_c[idx] = c_element;
 	}
-	d_c[row * n + col] = c_element;
-}
+
+	// Sync threads to update the d_b vector
+	__syncthreads();
+
+	// copy the resulted vector from c to b for re multiplying and final result of course
+	// after the final iteration will be stored in d_c
+	d_b[idx] = d_c[idx];
 }
 
-Kernel::Kernel() {
-}
+void Kernel::run_kernel() {
+	dim3 dimGrid(GRID_ROWS,GRID_COLS);
+	dim3 dimBlock(BLOCK_ROWS, BLOCK_COLS);
 
-Kernel::~Kernel() {
-}
-
-void Kernel::run_kernel(Matrix d_a, Matrix d_b, Matrix d_c) { 
 	for (int i = 0; i < max_iterations; ++i)
 	{
-		matrix_mul<<<gridSize, blockSize>>>(d_a, d_b, d_c);
+		matrix_mul<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, n);
 	}
 }
 
-void allocate_memory() {
-	
+void Kernel::allocate_matrices(Matrix h_a, Matrix h_b) {
+	int matirx_bytes = sizeof(double) * n * n;
+	int vector_bytes = sizeof(double) * n;
+
+	// Allocate memory at the device for matrices a, b, and the result c
+	cudaMalloc((void **) &d_a, matirx_bytes);
+	cudaMalloc((void **) &d_b, vector_bytes);
+	cudaMalloc((void **) &d_c, vector_bytes);
+
+	// Copy matrices a & b to the device
+	cudaMemcpy(d_a, h_a, matirx_bytes, cudaMemcpyHostToDevice);
+	cudaError_t e=cudaGetLastError();
+	if(e!=cudaSuccess) {
+		printf("MemCpy (A): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
+		exit(0);
+	}
+	cudaMemcpy(d_b, h_b, vector_bytes, cudaMemcpyHostToDevice);
+	e =cudaGetLastError();
+	if(e!=cudaSuccess) {
+		printf("MemCpy (B): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
+		exit(0);
+	}
+
+}
+
+Matrix Kernel::get_result() {
+	Matrix h_c = new double[n];
+
+	int vector_bytes = sizeof(double) * n;
+
+	cudaMemcpy(h_c, d_c, vector_bytes, cudaMemcpyDeviceToHost);
+	cudaError_t e=cudaGetLastError();
+	if(e!=cudaSuccess) {
+		printf("MemCpy (R): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
+		exit(0);
+	}
+
+	return h_c;
 }
 
 } /* namespace PageRank */

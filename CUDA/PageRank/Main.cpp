@@ -1,22 +1,24 @@
-
-/**
- * Copyright 1993-2012 NVIDIA Corporation.  All rights reserved.
- *
- * Please refer to the NVIDIA end user license agreement (EULA) associated
- * with this source code for terms and conditions that govern your use of
- * this software. Any use, reproduction, disclosure, or distribution of
- * this software and related documentation outside the terms of the EULA
- * is strictly prohibited.
- */
-#include <stdio.h>
-#include <stdlib.h>
-#include <cuda.h>
-#include <iostream>
-
+#include "Kernel.h"
+#include "GraphReader.h"
 using namespace std;
+using namespace PageRank;
 
 int main(int argc, char **argv)
 {
-	
+	Kernel page_rank(1, 3);
+
+	double h_a[] = {1, 4, 7, 2, 4, 6, 3, 5, 9};
+	double h_b[] = {0, 9, 10};
+
+	page_rank.allocate_matrices(h_a, h_b);
+	page_rank.run_kernel();
+	double *res = page_rank.get_result();
+	for (int i = 0; i < 3 ; i++) {
+		cout << res[i] << " ";
+	}
+	cout << endl;
+
+
 	return 0;
 }
+
