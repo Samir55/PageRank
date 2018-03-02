@@ -10,73 +10,80 @@
 namespace PageRank {
 
 // A Kernel for multiplying square matrices.
-__global__ void page_rank_iteration(Matrix d_a, Matrix d_b, Matrix d_c, int n, double alpha) {
-	double c_element = 0.0;
+    __global__ void page_rank_iteration(Matrix d_a, Matrix d_b, Matrix d_c, int n, double alpha) {
+        double c_element = 0.0;
 
-	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx < n) {
-		for (int i = 0; i < n; i++) {
-			c_element += (d_a[idx * n + i] * d_b[i]);
-		}
-		d_c[idx] = (alpha * c_element) + (1.0 - alpha) * 1.0/n;
-	}
+        int idx = blockIdx.x * blockDim.x + threadIdx.x;
+        if (idx < n) {
+            for (int i = 0; i < n; i++) {
+                c_element += (d_a[idx * n + i] * d_b[i]);
+            }
+            d_c[idx] = (alpha * c_element) + (1.0 - alpha) * 1.0/n;
+        }
 
-	// Sync threads to update the d_b vector
-	__syncthreads();
+        // Sync threads to update the d_b vector
+        __syncthreads();
 
-	// copy the resulted vector from c to b for re multiplying and final result of course
-	// after the final iteration will be stored in d_c
-	d_b[idx] = d_c[idx];
-}
+        // copy the resulted vector from c to b for re multiplying and final result of course
+        // after the final iteration will be stored in d_c
+        d_b[idx] = d_c[idx];
+    }
 
-void Kernel::run_kernel() {
-	dim3 dimGrid(GRID_ROWS,GRID_COLS);
-	dim3 dimBlock(BLOCK_ROWS, BLOCK_COLS);
+    void Kernel::run_kernel() {
+        int grid_size = int(ceil(1.0 * n / MAX_BLOCK_SIZE));
+        int block_size = int(ceil(1.0 * n / grid_size));
 
-	for (int i = 0; i < max_iterations; ++i)
-	{
-		page_rank_iteration<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, n);
-	}
-}
+        if (block_size < 1024) {
+            dim3 dimGrid(grid_size, 1);
+            dim3 dimBlock(block_size, 1);
 
-void Kernel::allocate_matrices(Matrix h_a, Matrix h_b) {
-	int matirx_bytes = sizeof(double) * n * n;
-	int vector_bytes = sizeof(double) * n;
+            for (int i = 0; i < max_iterations; ++i)
+            {
+                page_rank_iteration<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, n);
+            }
+        } else {
+            cout << "Error exceeded the maximum value for threads in a block 1024" << endl;
+        }
+    }
 
-	// Allocate memory at the device for matrices a, b, and the result c
-	cudaMalloc((void **) &d_a, matirx_bytes);
-	cudaMalloc((void **) &d_b, vector_bytes);
-	cudaMalloc((void **) &d_c, vector_bytes);
+    void Kernel::allocate_matrices(Matrix h_a, Matrix h_b) {
+        int matirx_bytes = sizeof(double) * n * n;
+        int vector_bytes = sizeof(double) * n;
 
-	// Copy matrices a & b to the device
-	cudaMemcpy(d_a, h_a, matirx_bytes, cudaMemcpyHostToDevice);
-	cudaError_t e=cudaGetLastError();
-	if(e!=cudaSuccess) {
-		printf("MemCpy (A): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
-		exit(0);
-	}
-	cudaMemcpy(d_b, h_b, vector_bytes, cudaMemcpyHostToDevice);
-	e =cudaGetLastError();
-	if(e!=cudaSuccess) {
-		printf("MemCpy (B): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
-		exit(0);
-	}
+        // Allocate memory at the device for matrices a, b, and the result c
+        cudaMalloc((void **) &d_a, matirx_bytes);
+        cudaMalloc((void **) &d_b, vector_bytes);
+        cudaMalloc((void **) &d_c, vector_bytes);
 
-}
+        // Copy matrices a & b to the device
+        cudaMemcpy(d_a, h_a, matirx_bytes, cudaMemcpyHostToDevice);
+        cudaError_t e=cudaGetLastError();
+        if(e!=cudaSuccess) {
+            printf("MemCpy (A): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
+            exit(0);
+        }
+        cudaMemcpy(d_b, h_b, vector_bytes, cudaMemcpyHostToDevice);
+        e =cudaGetLastError();
+        if(e!=cudaSuccess) {
+            printf("MemCpy (B): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
+            exit(0);
+        }
 
-Matrix Kernel::get_result() {
-	Matrix h_c = new double[n];
+    }
 
-	int vector_bytes = sizeof(double) * n;
+    Matrix Kernel::get_result() {
+        Matrix h_c = new double[n];
 
-	cudaMemcpy(h_c, d_c, vector_bytes, cudaMemcpyDeviceToHost);
-	cudaError_t e=cudaGetLastError();
-	if(e!=cudaSuccess) {
-		printf("MemCpy (R): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
-		exit(0);
-	}
+        int vector_bytes = sizeof(double) * n;
 
-	return h_c;
-}
+        cudaMemcpy(h_c, d_c, vector_bytes, cudaMemcpyDeviceToHost);
+        cudaError_t e=cudaGetLastError();
+        if(e!=cudaSuccess) {
+            printf("MemCpy (R): CUDA failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));
+            exit(0);
+        }
+
+        return h_c;
+    }
 
 } /* namespace PageRank */

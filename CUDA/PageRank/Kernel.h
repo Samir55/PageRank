@@ -14,10 +14,8 @@
 
 using namespace std;
 
-#define GRID_ROWS 3
-#define GRID_COLS 1
-#define BLOCK_ROWS 3
-#define BLOCK_COLS 1
+#define MAX_BLOCK_SIZE 25
+
 
 typedef double* Matrix;
 
