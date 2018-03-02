@@ -9,56 +9,16 @@
 
 namespace PageRank {
 
-/* PageRank calculations
-    private void rankPages() {
-        Double danglingSum, pagesRankSum = 1.0;
-
-        for (int iteration = 0; iteration < maxIterations; iteration++) {
-            danglingSum = 0.0;
-
-            // Normalize the PR(i) needed for the power method calculations
-            if (iteration > 0)
-                for (int page = 0; page < pagesCount; page++) {
-                    Double rank = pagesRank.get(page) * 1.0 / pagesRankSum;
-                    pagesRank.set(page, rank);
-                    if (outDegrees.get(page) == 0) {
-                        danglingSum += rank;
-                    }
-                }
-
-            pagesRankSum = 0.0;
-
-            Double aPage = alpha * danglingSum * (1.0 / pagesCount); // Same for all pages
-            Double oneProb = (1.0 - alpha) * (1.0 / pagesCount) * 1.0; // Same for all pages
-
-            // Loop over all pages
-            for (int page = 0; page < pagesCount; page++) {
-
-                Double hPage = 0.0;
-
-                if (inList.containsKey(page)) {
-                    for (Integer from : inList.get(page)) {
-                        hPage += (1.0 * pagesRank.get(from) / (1.0 * outDegrees.get(from)));
-                    }
-                    hPage *= alpha; // Multiply by dumping factor.
-                }
-
-                pagesRank.set(page, hPage + aPage + oneProb);
-                pagesRankSum += hPage + aPage + oneProb;
-            }
-        }
-}
-*/
-
 // A Kernel for multiplying square matrices.
-__global__ void matrix_mul(Matrix d_a, Matrix d_b, Matrix d_c, int n) {
+__global__ void page_rank_iteration(Matrix d_a, Matrix d_b, Matrix d_c, int n, double alpha) {
 	double c_element = 0.0;
+
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < n) {
 		for (int i = 0; i < n; i++) {
 			c_element += (d_a[idx * n + i] * d_b[i]);
 		}
-		d_c[idx] = c_element;
+		d_c[idx] = (alpha * c_element) + (1.0 - alpha) * 1.0/n;
 	}
 
 	// Sync threads to update the d_b vector
@@ -75,7 +35,7 @@ void Kernel::run_kernel() {
 
 	for (int i = 0; i < max_iterations; ++i)
 	{
-		matrix_mul<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, n);
+		page_rank_iteration<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, n);
 	}
 }
 
