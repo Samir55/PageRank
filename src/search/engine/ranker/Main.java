@@ -1,4 +1,4 @@
-package com.SearchEngine.Ranker;
+package search.engine.ranker;
 
 public class Main {
 

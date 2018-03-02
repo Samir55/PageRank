@@ -1,4 +1,4 @@
-package com.SearchEngine.Ranker;
+package search.engine.ranker;
 
 import java.io.FileReader;
 import java.io.BufferedReader;
