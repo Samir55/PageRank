@@ -18,4 +18,13 @@ GraphReader::~GraphReader() {
 	// TODO Auto-generated destructor stub
 }
 
+vector< vector<int> > GraphReader::read_graph(string path) {
+
+}
+
+Matrix GraphReader::construct_h_matrix(vector< vector<int> > &edgesList) {
+
+}
+
+
 } /* namespace PageRank */

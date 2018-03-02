@@ -14,10 +14,10 @@
 
 using namespace std;
 
-#define GRID_COLS 200
-#define GRID_ROWS 200
-#define BLOCK_ROWS 25
-#define BLOCK_COLS 25
+#define GRID_ROWS 3
+#define GRID_COLS 1
+#define BLOCK_ROWS 3
+#define BLOCK_COLS 1
 
 typedef double* Matrix;
 
