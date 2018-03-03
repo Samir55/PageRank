@@ -32,6 +32,7 @@ namespace PageRank {
     }
 
     void Kernel::run_kernel() {
+        // Calculate the grid and block sizes.
         int grid_size = int(ceil(1.0 * n / MAX_BLOCK_SIZE));
         int block_size = int(ceil(1.0 * n / grid_size));
 
@@ -39,9 +40,9 @@ namespace PageRank {
             dim3 dimGrid(grid_size, 1);
             dim3 dimBlock(block_size, 1);
 
-            for (int i = 0; i < max_iterations; ++i)
+            for (int i = 0; i < MAX_ITERATIONS; ++i)
             {
-                page_rank_iteration<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, d_sum, n, 0.85);
+                page_rank_iteration<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, d_sum, n, ALPHA);
             }
         } else {
             cout << "Error exceeded the maximum value for threads in a block 1024" << endl;

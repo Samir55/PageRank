@@ -1,53 +1,48 @@
 #include "Kernel.h"
 #include "GraphReader.h"
-#include <iomanip>
-using namespace std;
+
 using namespace PageRank;
 
-int main(int argc, char **argv)
-{
-    /* Debugging for read graph
-    cout << nodesList.size() << endl;
-    int i = 0;
-    for(auto node : nodesList) {
-        cout << "Node " << i++ << endl;
-        cout << "In degrees " << node.size() << endl;
-        cout << "Point to it nodes are ";
-        for (auto p : node) {
-            cout << p << " ";
-        }
-        cout << "\n ===============================================================" << endl;
-    }
-    */
+int main(int argc, char **argv) {
+    if (argc <= 1) return 0;
 
-    string path = "/home/ahmedsamir/SearchEngineRanker/Input/input.txt";
-    vector< vector<int> > nodesList = GraphReader::read_graph(path);
+    string path = argv[1];
 
     Matrix g_matrix, i_vector;
-    int* out_degrees;
+
+    int *out_degrees;
+
+    int nodes_count;
+
+    // Read graph file.
+    vector<vector<int> > nodesList = GraphReader::read_graph(path);
+    nodes_count = int(nodesList.size());
 
     // Construct S = H + A matrix
     GraphReader::construct_h_matrix(nodesList, g_matrix, i_vector, out_degrees);
+
+    // Free resources.
     GraphReader::free_resources();
 
-    Kernel page_rank(100, int(nodesList.size()));
+    // Create page rank kernel object
+    Kernel page_rank(nodes_count);
+
+    // Allocate matrices in the gpu memory
     page_rank.allocate_matrices(g_matrix, i_vector);
+
+    // Run PageRank algorithm
     page_rank.run_kernel();
 
-//    for (int i = 0;i < int(nodesList.size()) * int(nodesList.size()) ; i++) {
-//        if (i && i%int(nodesList.size()) == 0) cout << endl;
-//        cout << g_matrix[i] << "       ";
-//    }
-//    cout << endl;
+    // Save Result in output.txt file
+    ofstream file;
+    file.open("output.txt");
 
-	double *res = page_rank.get_result(), check_sum = 0.0;
-	for (int i = 0; i < int(nodesList.size()) ; i++) {
-		cout << i << " = " << setprecision(20) << res[i] << endl;
+    double *res = page_rank.get_result(), check_sum = 0.0;
+    for (int i = 0; i < int(nodesList.size()); i++) {
+        file << i << " = " << setprecision(20) << res[i] << endl;
         check_sum += res[i];
-	}
-	cout << endl;
-cout << "CHECK SUM " << check_sum << endl;
+    }
 
-	return 0;
+    return 0;
 }
 

@@ -28,15 +28,10 @@ namespace PageRank {
             out_degrees[i] = 0;
         }
 
-
         while (file >> from >> to) {
             edges_list[to].push_back(from);
             out_degrees[from]++;
         }
-
-//        for (int i = 0; i < n; ++i) {
-//            cout << "Outdegrees of node " << i << " is " << out_degrees[i] << endl;
-//        }
 
         return edges_list;
     }
@@ -55,11 +50,10 @@ namespace PageRank {
             i_vector[i] = 1.0 / n;
         }
 
-        // Initialize the matrix
+        // Initialize the matrix ToDo @Samir see something else
         for (int i =0;i < n; i++)
             for (int j = 0;j < n;j++)
                 g_matrix[i*n+j] = 0;
-
 
         for (int i = 0; i < n; ++i) {
             for (int from = 0; from < edges_list[i].size(); ++from) {
