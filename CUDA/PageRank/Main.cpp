@@ -9,8 +9,9 @@ int main(int argc, char **argv) {
 
     string path = argv[1];
 
-    Matrix g_matrix, i_vector;
-    int *out_degrees;
+    page* h_pages;
+    int* h_g;
+    I h_i;
     int nodes_count;
 
     GPUTimer gpu_timer;
@@ -20,7 +21,7 @@ int main(int argc, char **argv) {
     nodes_count = int(nodesList.size());
 
     // Construct S = H + A matrix
-    GraphReader::construct_h_matrix(nodesList, g_matrix, i_vector, out_degrees);
+    int total_edges = GraphReader::construct_h_matrix(nodesList, h_g, h_i, h_pages);
 
     // Free resources.
     GraphReader::free_resources();
@@ -29,7 +30,7 @@ int main(int argc, char **argv) {
     Kernel page_rank(nodes_count);
 
     // Allocate matrices in the gpu memory
-    page_rank.allocate_matrices(g_matrix, i_vector);
+    page_rank.allocate_matrices(total_edges, h_g, h_i, h_pages);
 
     // Run PageRank algorithm
     gpu_timer.start();

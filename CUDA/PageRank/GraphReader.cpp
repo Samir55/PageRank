@@ -10,6 +10,7 @@
 namespace PageRank {
 
     int *GraphReader::out_degrees = NULL;
+    int GraphReader::total_edges = 0;
 
     GraphReader::GraphReader() {}
 
@@ -31,39 +32,41 @@ namespace PageRank {
         while (file >> from >> to) {
             edges_list[to].push_back(from);
             out_degrees[from]++;
+            total_edges++;
         }
 
         return edges_list;
     }
 
-    Matrix GraphReader::construct_h_matrix(vector<vector<int> > &edges_list, Matrix &g_matrix, Matrix &i_vector,
-                                           int *&out_degrees) {
+    int GraphReader::construct_h_matrix(vector<vector<int> > &edges_list, int* &h_g, I &h_i,
+                                           page* &h_pages) {
         out_degrees = GraphReader::out_degrees;
         int n = int(edges_list.size());
 
-        g_matrix = new double[n * n];
-        i_vector = new double[n];
+        h_g = new int[total_edges];
+        h_i = new double[n];
+        h_pages = new page[n];
 
 
         // Initialize the I vector with 1/n values
         for (int i = 0; i < n; ++i) {
-            i_vector[i] = 1.0 / n;
+            h_i[i] = 1.0 / n;
         }
 
-        // Initialize the matrix ToDo @Samir see something else
-        for (int i =0;i < n; i++)
-            for (int j = 0;j < n;j++)
-                g_matrix[i*n+j] = 0;
-
+        int next_idx = 0;
         for (int i = 0; i < n; ++i) {
-            for (int from = 0; from < edges_list[i].size(); ++from) {
-                g_matrix[i * n + edges_list[i][from]] = (1.0 / out_degrees[edges_list[i][from]]);
-            }
-            if (out_degrees[i] == 0)
-                for (int row = 0; row < n; ++row) {
-                    g_matrix[i + n * row] = 1.0 / n;
+            if (out_degrees[i] > 0) {
+                h_pages[i].out_degrees = out_degrees[i];
+                h_pages[i].dangling = false;
+                h_pages[i].start_idx = next_idx;
+                h_pages[i].end_idx =  int(edges_list[i].size()) + next_idx;
+                for (auto from : edges_list[i]) {
+                    h_g[next_idx++] = from;
                 }
+            }
         }
+
+        return GraphReader::total_edges;
     }
 
     void GraphReader::free_resources() {

@@ -14,9 +14,10 @@
 #include <fstream>
 #include <cstring>
 #include <iomanip>
+#include "utils.h"
 
 using namespace std;
-typedef double* Matrix;
+typedef double* I;
 
 namespace PageRank {
 
@@ -25,10 +26,11 @@ public:
 	GraphReader();
 
 	static int *out_degrees;
+	static int total_edges;
 
 	static vector< vector<int> > read_graph(string path);
 
-	static Matrix construct_h_matrix(vector< vector<int> > &edgesList, Matrix& g_matrix, Matrix& i_vector, int* &out_degrees);
+	static int construct_h_matrix(vector<vector<int> > &edges_list, int* &h_g, I &h_i, page* &h_page);
 
 	static void free_resources();
 

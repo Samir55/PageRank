@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
+#include "utils.h"
 
 using namespace std;
 
@@ -19,27 +20,30 @@ using namespace std;
 #define MAX_BLOCK_SIZE 16
 
 
-typedef double* Matrix;
+typedef double* I;
 
 namespace PageRank {
 
 class Kernel {
 private:
+
 	int n;
-	Matrix d_a;
-    Matrix d_b;
-    Matrix d_c;
-    double* d_sum;
+    int* d_g;
+    page* d_pages;
+    I d_i;
+    I d_tmp;
+    double* d_ranks_sum;
+    double* d_dangling_sum;
 
 public:
 	Kernel(int n) : n(n) {}
 	virtual ~Kernel() {}
 
-	void allocate_matrices(Matrix h_a, Matrix h_b);
+	void allocate_matrices(int total_edges, int* h_g, I h_i, page* h_pages);
 
 	void run_kernel();
 
-	Matrix get_result();
+	double* get_result();
 };
 
 } /* namespace PageRank */
