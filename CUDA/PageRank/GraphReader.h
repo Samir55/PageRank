@@ -27,7 +27,7 @@ public:
 
 	static vector< vector<int> > read_graph(string path);
 
-	static Matrix construct_h_matrix(vector< vector<int> > &edgesList, Matrix g_matrix, Matrix i_vector, int* out_degrees);
+	static Matrix construct_h_matrix(vector< vector<int> > &edgesList, Matrix& g_matrix, Matrix& i_vector, int* &out_degrees);
 
 	static void free_resources();
 

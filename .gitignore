@@ -1,1 +1,5 @@
+
 images/
+.idea/*
+.idea
+*.xml

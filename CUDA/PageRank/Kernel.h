@@ -26,8 +26,9 @@ private:
 	int max_iterations;
 	int n;
 	Matrix d_a;
-	Matrix d_b;
-	Matrix d_c;
+    Matrix d_b;
+    Matrix d_c;
+    double* d_sum;
 
 public:
 	Kernel(int iterations, int n) : max_iterations(iterations), n(n) {}
