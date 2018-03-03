@@ -16,7 +16,7 @@ using namespace std;
 
 #define MAX_ITERATIONS 100
 #define ALPHA 0.85
-#define MAX_BLOCK_SIZE 25
+#define MAX_BLOCK_SIZE 16
 
 
 typedef double* Matrix;

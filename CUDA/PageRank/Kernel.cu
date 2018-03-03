@@ -13,17 +13,17 @@ namespace PageRank {
     __global__ void page_rank_iteration(Matrix d_a, Matrix d_b, Matrix d_c, double* d_sum, int n, double alpha) {
         double c_element = 0.0;
 
-        int idx = blockIdx.x * blockDim.x + threadIdx.x;
+        int idx = blockIdx.y * blockDim.y + threadIdx.y;
         if (idx < n) {
             for (int i = 0; i < n; i++) {
                 c_element += (d_a[idx * n + i] * d_b[i]);
             }
             d_c[idx] = (alpha * c_element) + (1.0 - alpha) * 1.0/n;
-            atomicAdd(d_sum, (alpha * c_element) + (1.0 - alpha) * 1.0/n);
         }
+    }
 
-        // Sync threads to update the d_b vector
-        __syncthreads();
+    __global__ void update_i_vector(Matrix d_b, Matrix d_c) {
+        int idx = blockIdx.y * blockDim.y + threadIdx.y;
 
         // Normalize the vector.
         // copy the resulted vector from c to b for re multiplying and final result of course
@@ -37,12 +37,13 @@ namespace PageRank {
         int block_size = int(ceil(1.0 * n / grid_size));
 
         if (block_size < 1024) {
-            dim3 dimGrid(grid_size, 1);
-            dim3 dimBlock(block_size, 1);
+            dim3 dimGrid(1, grid_size);
+            dim3 dimBlock(1, block_size);
 
             for (int i = 0; i < MAX_ITERATIONS; ++i)
             {
                 page_rank_iteration<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, d_sum, n, ALPHA);
+                update_i_vector<<<dimGrid, dimBlock>>>(d_b, d_c);
             }
         } else {
             cout << "Error exceeded the maximum value for threads in a block 1024" << endl;

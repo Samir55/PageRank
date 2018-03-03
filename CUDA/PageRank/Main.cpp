@@ -1,3 +1,4 @@
+#include "GPUTimer.h"
 #include "Kernel.h"
 #include "GraphReader.h"
 
@@ -9,10 +10,10 @@ int main(int argc, char **argv) {
     string path = argv[1];
 
     Matrix g_matrix, i_vector;
-
     int *out_degrees;
-
     int nodes_count;
+
+    GPUTimer gpu_timer;
 
     // Read graph file.
     vector<vector<int> > nodesList = GraphReader::read_graph(path);
@@ -31,7 +32,11 @@ int main(int argc, char **argv) {
     page_rank.allocate_matrices(g_matrix, i_vector);
 
     // Run PageRank algorithm
+    gpu_timer.start();
+
     page_rank.run_kernel();
+
+    gpu_timer.stop();
 
     // Save Result in output.txt file
     ofstream file;
@@ -43,6 +48,8 @@ int main(int argc, char **argv) {
         check_sum += res[i];
     }
 
+    // Print Elapsed time
+    cout << "Elapsed PageRank time in gpu " << gpu_timer.elapsed() << " ms" << endl;
     return 0;
 }
 
