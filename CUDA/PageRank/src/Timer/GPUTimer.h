@@ -4,6 +4,7 @@
 #include <cuda_runtime_api.h>
 #include <cuda.h>
 
+/// Timer for GPU 
 class GPUTimer {
 public:
     cudaEvent_t e_start;
