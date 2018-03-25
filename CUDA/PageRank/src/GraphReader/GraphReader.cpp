@@ -9,70 +9,56 @@
 
 namespace PageRank {
 
-    int *GraphReader::out_degrees = NULL;
-    int GraphReader::total_edges = 0;
+    int GraphReader::pages_count = 0;
+    int GraphReader::edges_count = 0;
 
-    GraphReader::GraphReader() {}
+    vector<int> GraphReader::out_degrees = vector<int>();
+    vector< vector<int> > GraphReader::edges_list = vector< vector<int> >();
 
-    GraphReader::~GraphReader() {}
-
-    vector<vector<int> > GraphReader::read_graph(string path) {
+    void GraphReader::read_graph(string path) {
         ifstream file;
         file.open(path.c_str());
 
         int n, to, from;
-        file >> n;
-        vector<vector<int> > edges_list(n);
-        GraphReader::out_degrees = new int[n];
-
-        for (int i = 0; i < n; ++i) {
-            out_degrees[i] = 0;
-        }
+        file >> pages_count;
+    
+        edges_list = vector<vector<int> >(pages_count);
+        out_degrees = vector<int>(pages_count), 0;
 
         while (file >> from >> to) {
             edges_list[to].push_back(from);
             out_degrees[from]++;
-            total_edges++;
+
+            edges_count++;
         }
 
-        return edges_list;
+        file.close();
     }
 
-    int GraphReader::construct_h_matrix(vector<vector<int> > &edges_list, int* &h_g, I &h_i,
-                                           page* &h_pages) {
-        out_degrees = GraphReader::out_degrees;
-        int n = int(edges_list.size());
-
-        h_g = new int[total_edges];
-        h_i = new double[n];
-        h_pages = new page[n];
-
-
-        // Initialize the I vector with 1/n values
-        for (int i = 0; i < n; ++i) {
-            h_i[i] = 1.0 / n;
+    void GraphReader::get_pages(Page* pages, double* pages_probs, int* in_nodes) {
+        pages_probs = new double[pages_count];
+        pages = new Page[pages_count];
+        
+        // Initialize the pages_probs (I) vector with 1/n values
+        for (int i = 0; i < pages_count; ++i) {
+            pages_probs[i] = 1.0 / pages_count;
         }
 
         int next_idx = 0;
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < pages_count; ++i) {
             if (out_degrees[i] > 0) {
-                h_pages[i].out_degrees = out_degrees[i];
-                h_pages[i].dangling = false;
-                h_pages[i].start_idx = next_idx;
-                h_pages[i].end_idx =  int(edges_list[i].size()) + next_idx;
+                pages[i].out_links_count = out_degrees[i];
+                pages[i].in_links_count = 0;
+
+                pages[i].start_idx = next_idx;
+                pages[i].end_idx =  int(edges_list[i].size()) + next_idx;
+
                 for (auto from : edges_list[i]) {
-                    h_g[next_idx++] = from;
+                    in_nodes[next_idx++] = from;
                 }
             }
         }
-
-        return GraphReader::total_edges;
+        
     }
-
-    void GraphReader::free_resources() {
-        // free the resources
-        delete out_degrees;
-    }
-
 
 } /* namespace PageRank */

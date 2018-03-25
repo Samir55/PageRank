@@ -1,10 +1,13 @@
-//
-// Created by ahmedsamir on 3/3/18.
-//
+/* Timer for GPU 
+ * GPUTimer.h
+ *
+ * Created on: March 3, 2018
+ * 		Author: ahmedsamir
+ */
+
 #include <cuda_runtime_api.h>
 #include <cuda.h>
 
-/// Timer for GPU 
 class GPUTimer {
 public:
     cudaEvent_t e_start;
