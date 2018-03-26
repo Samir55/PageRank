@@ -55,25 +55,22 @@ namespace PageRank {
         cudaMalloc ((void **) &d_edges_list, sizeof(int) * edges_count);
 
         // Copy data from host (cpu) to the gpu
-        cudaMemcpy(d_pages, h_pages, sizeof(Page) * pages_count);
-        cudaMemcpy(d_page_probs, h_pages_probs, sizeof(double) * pages_count);
-        cudaMemcpy(d_edges_list, h_edges_list, sizeof(int) * edges_count);
+        cudaMemcpy(d_pages, h_pages, sizeof(Page) * pages_count, cudaMemcpyDeviceToHost);
+        cudaMemcpy(d_page_probs, h_pages_probs, sizeof(double) * pages_count, cudaMemcpyDeviceToHost);
+        cudaMemcpy(d_edges_list, h_edges_list, sizeof(int) * edges_count, cudaMemcpyDeviceToHost);
     }
 
-    Matrix Kernel::get_result() {
-//
-//        Matrix h_c = new double[n];
-//
-//        int vector_bytes = sizeof(double) * n;
-//
-//        cudaMemcpy(h_c, d_c, vector_bytes, cudaMemcpyDeviceToHost);
-//        cudaError_t e = cudaGetLastError();
-//        if (e != cudaSuccess) {
-//            printf("MemCpy (R): CUDA failure %s:%d: '%s'\n", __FILE__, __LINE__, cudaGetErrorString(e));
-//            exit(0);
-//        }
+    double* Kernel::get_result() {
+        double* pages_probs = new double[pages_count];
 
-        return 0;
+        cudaMemcpy(pages_probs, d_page_probs, sizeof(double) * pages_count, cudaMemcpyDeviceToHost);
+               cudaError_t e = cudaGetLastError();
+                if (e != cudaSuccess) {
+                    printf("MemCpy (R): CUDA failure %s:%d: '%s'\n", __FILE__, __LINE__, cudaGetErrorString(e));
+                    exit(0);
+                }
+
+        return pages_probs;
     }
 
 } /* namespace PageRank */
