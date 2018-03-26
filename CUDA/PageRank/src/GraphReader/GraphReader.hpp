@@ -33,7 +33,7 @@ public:
 
 	static void read_graph(string path);
 
-	static void get_pages(Page* pages, double* pages_probs, int* edges_list, int& dangling_nodes_count);
+	static int get_pages(Page* pages, double* pages_probs, int* edges_list, int& dangling_nodes_count);
 
 };
 

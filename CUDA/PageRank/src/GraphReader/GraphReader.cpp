@@ -35,7 +35,7 @@ namespace PageRank {
         file.close();
     }
 
-    void GraphReader::get_pages(Page* pages, double* pages_probs, int* in_nodes, int& dangling_nodes_count) {
+    int GraphReader::get_pages(Page* pages, double* pages_probs, int* in_nodes, int& dangling_nodes_count) {
         in_nodes = new int[edges_count];
         pages_probs = new double[pages_count];
         pages = new Page[pages_count];
@@ -56,14 +56,15 @@ namespace PageRank {
                 pages[i].start_idx = next_idx;
                 pages[i].end_idx =  int(edges_list[i].size()) + next_idx;
 
-                for (auto from : edges_list[i]) {
+                for (int j = 0; j < edges_list[i].size(); j++) {
+                	int auto from = edges_list[i][j];
                     in_nodes[next_idx++] = from;
                 }
             } else {
                 dangling_nodes_count++;
             }
         }
-        
+        return pages_count;
     }
 
 } /* namespace PageRank */

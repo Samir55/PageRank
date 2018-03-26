@@ -9,5 +9,6 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <stdio.h>
 
 using namespace std;
