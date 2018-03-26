@@ -55,9 +55,9 @@ namespace PageRank {
         cudaMalloc ((void **) &d_edges_list, sizeof(int) * edges_count);
 
         // Copy data from host (cpu) to the gpu
-        cudaMemcpy(d_pages, h_pages, sizeof(Page) * pages_count, cudaMemcpyDeviceToHost);
-        cudaMemcpy(d_pages_probs, h_pages_probs, sizeof(double) * pages_count, cudaMemcpyDeviceToHost);
-        cudaMemcpy(d_edges_list, h_edges_list, sizeof(int) * edges_count, cudaMemcpyDeviceToHost);
+        cudaMemcpy(d_pages, h_pages, sizeof(Page) * pages_count, cudaMemcpyHostToDevice);
+        cudaMemcpy(d_pages_probs, h_pages_probs, sizeof(double) * pages_count, cudaMemcpyHostToDevice);
+        cudaMemcpy(d_edges_list, h_edges_list, sizeof(int) * edges_count, cudaMemcpyHostToDevice);
     }
 
     double* Kernel::get_result() {

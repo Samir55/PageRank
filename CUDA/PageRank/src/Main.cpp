@@ -43,6 +43,7 @@ int main(int argc, char **argv) {
 		file << i << " = " << setprecision(20) << res[i] << endl;
 		check_sum += res[i];
 	}
+	file.close();
 
 	// Print Elapsed time
 	cout << "Elapsed PageRank time in gpu " << gpu_timer.elapsed() << " ms" << endl;

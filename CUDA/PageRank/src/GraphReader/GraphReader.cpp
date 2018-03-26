@@ -49,21 +49,28 @@ namespace PageRank {
 
         int next_idx = 0;
         for (int i = 0; i < pages_count; ++i) {
-            if (out_degrees[i] > 0) {
-                pages[i].out_links_count = out_degrees[i];
-                pages[i].in_links_count = 0;
+		pages[i].out_links_count = out_degrees[i];
+		pages[i].in_links_count = edges_list[i].size();
 
-                pages[i].start_idx = next_idx;
-                pages[i].end_idx =  int(edges_list[i].size()) + next_idx;
+		if (edges_list[i].size() > 0) {
+			pages[i].start_idx = next_idx;
+			pages[i].end_idx =  int(edges_list[i].size()) + next_idx;
+		}
 
-                for (int j = 0; j < edges_list[i].size(); j++) {
-                	int auto from = edges_list[i][j];
-                    in_nodes[next_idx++] = from;
-                }
-            } else {
-                dangling_nodes_count++;
-            }
+		for (int j = 0; j < edges_list[i].size(); j++) {
+			int auto from = edges_list[i][j];
+		    in_nodes[next_idx++] = from;
+		} 
+           	if (out_degrees[i] > 0) dangling_nodes_count++; 
         }
+	cout << "==============================================================" << endl;
+	cout << "DEBUGGING GRAPHREADER" << endl;
+	cout << "==============================================================" << endl;
+	for (int i = 0; i < pages_count; i++) {
+		cout << "Node: " << i << " " << "Outlinks: " << pages[i].out_links_count << " Inlinks: " <<  pages[i].in_links_count << " Start index: " << pages[i].start_idx << " End index: " <<  pages[i].end_idx << endl;	
+	}	
+	cout << "==============================================================" << endl;
+	cout << "==============================================================" << endl;
         return pages_count;
     }
 
