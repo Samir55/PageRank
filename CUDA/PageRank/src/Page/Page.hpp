@@ -8,7 +8,7 @@
 #ifndef PAGE_H_
 #define PAGE_H_
 
-struct Page{
+struct Page {
     bool dangling_node;
 
     int in_links_count;

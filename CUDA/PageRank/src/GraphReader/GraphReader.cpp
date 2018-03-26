@@ -35,7 +35,7 @@ namespace PageRank {
         file.close();
     }
 
-    int GraphReader::get_pages(Page* pages, double* pages_probs, int* in_nodes, int& dangling_nodes_count) {
+    int GraphReader::get_pages(Page* &pages, double* &pages_probs, int* &in_nodes, int& dangling_nodes_count) {
         in_nodes = new int[edges_count];
         pages_probs = new double[pages_count];
         pages = new Page[pages_count];
@@ -66,9 +66,9 @@ namespace PageRank {
 	cout << "==============================================================" << endl;
 	cout << "DEBUGGING GRAPHREADER" << endl;
 	cout << "==============================================================" << endl;
-	for (int i = 0; i < pages_count; i++) {
-		cout << "Node: " << i << " " << "Outlinks: " << pages[i].out_links_count << " Inlinks: " <<  pages[i].in_links_count << " Start index: " << pages[i].start_idx << " End index: " <<  pages[i].end_idx << endl;	
-	}	
+	//for (int i = 0; i < pages_count; i++) {
+	//	cout << "Node: " << i << " " << "Outlinks: " << pages[i].out_links_count << " Inlinks: " <<  pages[i].in_links_count << " Start index: " << pages[i].start_idx << " End index: " <<  pages//[i].end_idx << endl;	
+//	}	
 	cout << "==============================================================" << endl;
 	cout << "==============================================================" << endl;
         return pages_count;
