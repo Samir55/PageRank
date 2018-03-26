@@ -5,7 +5,7 @@
  *      Author: ahmedsamir
  */
 
-#include "GraphReader.h"
+#include "GraphReader.hpp"
 
 namespace PageRank {
 
@@ -35,9 +35,12 @@ namespace PageRank {
         file.close();
     }
 
-    void GraphReader::get_pages(Page* pages, double* pages_probs, int* in_nodes) {
+    void GraphReader::get_pages(Page* pages, double* pages_probs, int* in_nodes, int& dangling_nodes_count) {
+        in_nodes = new int[edges_count];
         pages_probs = new double[pages_count];
         pages = new Page[pages_count];
+
+        dangling_nodes_count = 0;
         
         // Initialize the pages_probs (I) vector with 1/n values
         for (int i = 0; i < pages_count; ++i) {
@@ -56,6 +59,8 @@ namespace PageRank {
                 for (auto from : edges_list[i]) {
                     in_nodes[next_idx++] = from;
                 }
+            } else {
+                dangling_nodes_count++;
             }
         }
         

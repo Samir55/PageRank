@@ -5,7 +5,7 @@
  *      Author: Ahmed Samir
  */
 
-#include "Kernel.h"
+#include "Kernel.hpp"
 
 namespace PageRank {
 
@@ -21,7 +21,7 @@ namespace PageRank {
 
     }
 
-    void Kernel::run_kernel() {
+    void Kernel::run_kernel(int dangling_nodes_count) {
         // Calculate the grid and block sizes.
         int grid_size = int(ceil(1.0 * n / MAX_BLOCK_SIZE));
         int block_size = int(ceil(1.0 * n / grid_size));
@@ -32,39 +32,22 @@ namespace PageRank {
 
             for (int i = 0; i < MAX_ITERATIONS; ++i) {
                 page_rank_iteration << < dimGrid, dimBlock >> > (d_g, d_i, d_tmp, d_pages, d_dangling_sum, d_ranks_sum, n, ALPHA);
-                update_i_vector << < dimGrid, dimBlock >> > (d_i, d_tmp);
             }
         } else {
             cout << "Error exceeded the maximum value for threads in a block 1024" << endl;
         }
     }
 
-    void Kernel::allocate_matrices(int total_edges, int *h_g, I h_i, page *h_pages) {
-        long h_g_size = sizeof(int) * total_edges;
-        long h_page_size = sizeof(page) * n;
-        long h_i_size = sizeof(double) * n;
-        double h_ranks_size = sizeof(double);
-        double h_dangling_size = sizeof(double);
+    void Kernel::allocate_data(Page* h_pages, double* h_pages_probs, int* h_edges_list) {
+        // Allocate memory at the gpu device
+        cudaMalloc ((void **) &d_pages, sizeof(Page) * pages_count);
+        cudaMalloc ((void **) &d_page_probs, sizeof(double) * pages_count);
+        cudaMalloc ((void **) &d_edges_list, sizeof(int) * edges_count);
 
-        double h_ranks_sum = 1.0;
-        double h_dangling_sum = 0.0;
-
-        // Allocate memory at the device for matrices a, b, and the result c
-        cudaMalloc((void **) &d_g, h_g_size);
-        cudaMalloc((void **) &d_pages, h_page_size);
-        cudaMalloc((void **) &d_i, h_i_size);
-        cudaMalloc((void **) &d_tmp, h_i_size);
-        cudaMalloc((void **) &d_ranks_sum, h_ranks_size);
-        cudaMalloc((void **) &d_dangling_sum, h_dangling_size);
-
-
-        // Copy matrices a & b to the device
-        cudaMemcpy(d_g, h_g, h_g_size, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_pages, h_pages, h_page_size, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_i, h_i, h_i_size, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_ranks_sum, &h_ranks_sum, h_ranks_size, cudaMemcpyHostToDevice);
-        cudaMemcpy(d_dangling_sum, h_dangling_sum, h_dangling_size, cudaMemcpyHostToDevice);
-
+        // Copy data from host (cpu) to the gpu
+        cudaMemcpy(d_pages, h_pages, sizeof(Page) * pages_count);
+        cudaMemcpy(d_page_probs, h_pages_probs, sizeof(double) * pages_count);
+        cudaMemcpy(d_edges_list, h_edges_list, sizeof(int) * edges_count);
     }
 
     Matrix Kernel::get_result() {

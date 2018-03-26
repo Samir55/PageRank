@@ -1,0 +1,44 @@
+/*
+ * Kernel.h
+ *
+ *  Created on: Feb 27, 2018
+ *      Author: ahmedsamir
+ */
+
+#ifndef KERNEL_H_
+#define KERNEL_H_
+
+#include "../Utils/utils.hpp"
+#include "../Page/Page.hpp"
+
+#define MAX_ITERATIONS 100
+#define ALPHA 0.85
+#define MAX_BLOCK_SIZE 16
+
+namespace PageRank {
+
+class Kernel {
+private:
+
+	int pages_count;
+    int edges_count;
+
+    Page* d_pages;
+    double* d_pages_probs;
+    int *d_edges_list;
+
+public:
+	Kernel(int n, int e) : pages_count(n), edges_count(e) {}
+    
+	virtual ~Kernel() {}
+
+	void allocate_data(Page* h_pages, double* h_pages_probs, int* edges_list, int dangling_nodes_count);
+
+	void run_kernel(int dangling_nodes_count);
+
+	double* get_result();
+};
+
+} /* namespace PageRank */
+
+#endif /* KERNEL_H_ */

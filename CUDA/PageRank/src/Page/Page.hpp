@@ -5,6 +5,9 @@
  * 		Author: ahmedsamir
  */
 
+#ifndef PAGE_H_
+#define PAGE_H_
+
 struct Page{
     bool dangling_node;
 
@@ -20,3 +23,5 @@ struct Page{
         start_idx = end_idx = -1;
     }
 };
+
+#endif /* PAGE_H_ */

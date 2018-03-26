@@ -1,6 +1,6 @@
-#include "GPUTimer.h"
-#include "Kernel.h"
-#include "GraphReader.h"
+#include "Timer/GPUTimer.hpp"
+#include "Kernel/Kernel.hpp"
+#include "GraphReader/GraphReader.hpp"
 
 using namespace PageRank;
 
