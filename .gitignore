@@ -3,3 +3,5 @@ images/
 .idea/*
 .idea
 *.xml
+out/*
+out/
