@@ -17,27 +17,27 @@
 
 namespace PageRank {
 
-    class Kernel {
-    private:
+class Kernel {
+private:
 
-        int pages_count;
-        int edges_count;
+	int pages_count;
+	int edges_count;
 
-        Page *d_pages;
-        double *d_pages_probs;
-        int *d_edges_list;
+	Page *d_pages;
+	double *d_pages_probs;
+	int *d_edges_list;
 
-    public:
-        Kernel(int n, int e) : pages_count(n), edges_count(e), d_pages(NULL), d_pages_probs(NULL), d_edges_list(NULL) {}
+public:
+	Kernel(int n, int e) : pages_count(n), edges_count(e), d_pages(NULL), d_pages_probs(NULL), d_edges_list(NULL) {}
 
-        virtual ~Kernel() {}
+	virtual ~Kernel() {}
 
-        void allocate_data(Page *h_pages, double *h_pages_probs, int *edges_list);
+	void allocate_data(Page *h_pages, double *h_pages_probs, int *edges_list);
 
-        void run_kernel(int dangling_nodes_count);
+	void run_kernel(int dangling_nodes_count);
 
-        double *get_result();
-    };
+	double *get_result();
+};
 
 } /* namespace PageRank */
 

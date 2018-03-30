@@ -10,33 +10,33 @@
 
 class GPUTimer {
 public:
-    cudaEvent_t e_start;
-    cudaEvent_t e_stop;
+	cudaEvent_t e_start;
+	cudaEvent_t e_stop;
 
-    GPUTimer() {
-        cudaEventCreate(&e_start);
-        cudaEventCreate(&e_stop);
-    }
+	GPUTimer() {
+		cudaEventCreate(&e_start);
+		cudaEventCreate(&e_stop);
+	}
 
-    void start() {
-        cudaEventRecord(e_start, 0);
-    }
+	void start() {
+		cudaEventRecord(e_start, 0);
+	}
 
-    void stop() {
-        cudaEventRecord(e_stop, 0);
-    }
+	void stop() {
+		cudaEventRecord(e_stop, 0);
+	}
 
-    double elapsed() {
-        float elapsed;
-        cudaEventSynchronize(e_stop);
-        cudaEventElapsedTime(&elapsed, e_start, e_stop);
-        return elapsed;
-    }
+	double elapsed() {
+		float elapsed;
+		cudaEventSynchronize(e_stop);
+		cudaEventElapsedTime(&elapsed, e_start, e_stop);
+		return elapsed;
+	}
 
-    ~GPUTimer() {
-        cudaEventDestroy(e_start);
-        cudaEventDestroy(e_stop);
-    }
+	~GPUTimer() {
+		cudaEventDestroy(e_start);
+		cudaEventDestroy(e_stop);
+	}
 
 };
 

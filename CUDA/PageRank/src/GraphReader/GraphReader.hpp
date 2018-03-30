@@ -27,7 +27,7 @@ public:
 
 	static int pages_count;
 	static int edges_count;
-	
+
 	static vector<int> out_degrees;
 	static vector< vector<int> > edges_list;
 

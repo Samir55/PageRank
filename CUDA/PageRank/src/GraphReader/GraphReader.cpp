@@ -9,46 +9,46 @@
 
 namespace PageRank {
 
-    int GraphReader::pages_count = 0;
-    int GraphReader::edges_count = 0;
+int GraphReader::pages_count = 0;
+int GraphReader::edges_count = 0;
 
-    vector<int> GraphReader::out_degrees = vector<int>();
-    vector< vector<int> > GraphReader::edges_list = vector< vector<int> >();
+vector<int> GraphReader::out_degrees = vector<int>();
+vector< vector<int> > GraphReader::edges_list = vector< vector<int> >();
 
-    void GraphReader::read_graph(string path) {
-        ifstream file;
-        file.open(path.c_str());
+void GraphReader::read_graph(string path) {
+	ifstream file;
+	file.open(path.c_str());
 
-        int n, to, from;
-        file >> pages_count;
-    
-        edges_list = vector<vector<int> >(pages_count);
-        out_degrees = vector<int>(pages_count), 0;
+	int n, to, from;
+	file >> pages_count;
 
-        while (file >> from >> to) {
-            edges_list[to].push_back(from);
-            out_degrees[from]++;
+	edges_list = vector<vector<int> >(pages_count);
+	out_degrees = vector<int>(pages_count), 0;
 
-            edges_count++;
-        }
+	while (file >> from >> to) {
+		edges_list[to].push_back(from);
+		out_degrees[from]++;
 
-        file.close();
-    }
+		edges_count++;
+	}
 
-    int GraphReader::get_pages(Page* &pages, double* &pages_probs, int* &in_nodes, int& dangling_nodes_count) {
-        in_nodes = new int[edges_count];
-        pages_probs = new double[pages_count];
-        pages = new Page[pages_count];
+	file.close();
+}
 
-        dangling_nodes_count = 0;
-        
-        // Initialize the pages_probs (I) vector with 1/n values
-        for (int i = 0; i < pages_count; ++i) {
-            pages_probs[i] = 1.0 / pages_count;
-        }
+int GraphReader::get_pages(Page* &pages, double* &pages_probs, int* &in_nodes, int& dangling_nodes_count) {
+	in_nodes = new int[edges_count];
+	pages_probs = new double[pages_count];
+	pages = new Page[pages_count];
 
-        int next_idx = 0;
-        for (int i = 0; i < pages_count; ++i) {
+	dangling_nodes_count = 0;
+
+	// Initialize the pages_probs (I) vector with 1/n values
+	for (int i = 0; i < pages_count; ++i) {
+		pages_probs[i] = 1.0 / pages_count;
+	}
+
+	int next_idx = 0;
+	for (int i = 0; i < pages_count; ++i) {
 		pages[i].out_links_count = out_degrees[i];
 		pages[i].in_links_count = edges_list[i].size();
 
@@ -59,19 +59,19 @@ namespace PageRank {
 
 		for (int j = 0; j < edges_list[i].size(); j++) {
 			int auto from = edges_list[i][j];
-		    in_nodes[next_idx++] = from;
+			in_nodes[next_idx++] = from;
 		} 
-           	if (out_degrees[i] > 0) dangling_nodes_count++; 
-        }
+		if (out_degrees[i] > 0) dangling_nodes_count++;
+	}
 	cout << "==============================================================" << endl;
 	cout << "DEBUGGING GRAPHREADER" << endl;
 	cout << "==============================================================" << endl;
 	//for (int i = 0; i < pages_count; i++) {
 	//	cout << "Node: " << i << " " << "Outlinks: " << pages[i].out_links_count << " Inlinks: " <<  pages[i].in_links_count << " Start index: " << pages[i].start_idx << " End index: " <<  pages//[i].end_idx << endl;	
-//	}	
+	//	}
 	cout << "==============================================================" << endl;
 	cout << "==============================================================" << endl;
-        return pages_count;
-    }
+	return pages_count;
+}
 
 } /* namespace PageRank */

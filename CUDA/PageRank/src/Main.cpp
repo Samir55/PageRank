@@ -5,63 +5,63 @@
 using namespace PageRank;
 
 int main(int argc, char **argv) {
-    if (argc <= 1) return 0;
+	if (argc <= 1) return 0;
 
-    string path = argv[1];
+	string path = argv[1];
 
-    GPUTimer gpu_timer;
+	GPUTimer gpu_timer;
 
-    // Read graph file.
-    GraphReader::read_graph(path);
+	// Read graph file.
+	GraphReader::read_graph(path);
 
-    Page *h_pages;
-    double *h_pages_probs;
-    int *h_edges_list;
-    int h_dangling_nodes_count;
+	Page *h_pages;
+	double *h_pages_probs;
+	int *h_edges_list;
+	int h_dangling_nodes_count;
 
-    int nodes_count = GraphReader::get_pages(h_pages, h_pages_probs, h_edges_list, h_dangling_nodes_count);
+	int nodes_count = GraphReader::get_pages(h_pages, h_pages_probs, h_edges_list, h_dangling_nodes_count);
 
-    cout << "DEBUGGING MAIN.CPP" << endl;
-    cout << "==============================================================" << endl;
-    cout << "Pages count: " << GraphReader::pages_count << " Edges count: " << GraphReader::edges_count << endl;
+	cout << "DEBUGGING MAIN.CPP" << endl;
+	cout << "==============================================================" << endl;
+	cout << "Pages count: " << GraphReader::pages_count << " Edges count: " << GraphReader::edges_count << endl;
 
-    // Create page rank kernel object
-    Kernel page_rank(GraphReader::pages_count, GraphReader::edges_count);
+	// Create page rank kernel object
+	Kernel page_rank(GraphReader::pages_count, GraphReader::edges_count);
 
-    cout << "Initializing Kernel FINISHED" << endl;
+	cout << "Initializing Kernel FINISHED" << endl;
 
-    // Allocate matrices in the gpu memory
-    page_rank.allocate_data(h_pages, h_pages_probs, h_edges_list);
+	// Allocate matrices in the gpu memory
+	page_rank.allocate_data(h_pages, h_pages_probs, h_edges_list);
 
-    cout << "Allocation FINISHED" << endl;
+	cout << "Allocation FINISHED" << endl;
 
-    // Run PageRank algorithm
-    gpu_timer.start();
+	// Run PageRank algorithm
+	gpu_timer.start();
 
-    page_rank.run_kernel(h_dangling_nodes_count);
+	page_rank.run_kernel(h_dangling_nodes_count);
 
-    gpu_timer.stop();
+	gpu_timer.stop();
 
-    cout << "Running Kernel FINISHED" << endl;
+	cout << "Running Kernel FINISHED" << endl;
 
-    // Save Result in output.txt file
-    ofstream file;
-    file.open("output.txt");
+	// Save Result in output.txt file
+	ofstream file;
+	file.open("output.txt");
 
-    double *res = page_rank.get_result(), check_sum = 0.0;
-    for (int i = 0; i < nodes_count; i++) {
-        file << i << " = " << setprecision(20) << res[i] << endl;
-        check_sum += res[i];
-    }
-    file.close();
+	double *res = page_rank.get_result(), check_sum = 0.0;
+	for (int i = 0; i < nodes_count; i++) {
+		file << i << " = " << setprecision(20) << res[i] << endl;
+		check_sum += res[i];
+	}
+	file.close();
 
-    cout << "Output FINISHED" << endl;
+	cout << "Output FINISHED" << endl;
 
-    // Print Elapsed time
-    cout << "Elapsed PageRank time in gpu " << gpu_timer.elapsed() << " ms" << endl;
+	// Print Elapsed time
+	cout << "Elapsed PageRank time in gpu " << gpu_timer.elapsed() << " ms" << endl;
 
-    cout << "==============================================================" << endl;
-    cout << "==============================================================" << endl;
-    return 0;
+	cout << "==============================================================" << endl;
+	cout << "==============================================================" << endl;
+	return 0;
 }
 
