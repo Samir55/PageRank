@@ -10,3 +10,12 @@ Search Page Rank based on the following article ["How Google Finds Your Needle i
 # Todo:
 * Add Machine learning technique beside PageRank.
 
+# Build
+```Console
+cd CUDA
+mkdir build
+cd build
+cmake ..
+make 
+./PageRank the_input_edges_list
+```
