@@ -18,6 +18,7 @@ __global__ void initialize_pages_ranks_sum(float *d_page_ranks_sum) {
 }
 
 __global__ void calculate_dangling_sum_and_normalize (Page *d_pages, double *d_page_probs, int pages_count, float *d_page_ranks_sum, float *d_dangling_probs_sum) {
+	// Calculate page index from thread address
 	int idx = blockIdx.y * blockDim.y + threadIdx.y;
 
 	if (idx < pages_count) {
