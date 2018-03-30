@@ -17,20 +17,18 @@ __global__ void initialize_pages_ranks_sum(float *d_page_ranks_sum) {
 	d_page_ranks_sum[0] = 0.0;
 }
 
-__global__ void iteration_preparation (Page *d_pages, double *d_page_probs, int pages_count, float *d_page_ranks_sum, float *d_dangling_probs_sum) {
+__global__ void calculate_dangling_sum_and_normalize (Page *d_pages, double *d_page_probs, int pages_count, float *d_page_ranks_sum, float *d_dangling_probs_sum) {
 	int idx = blockIdx.y * blockDim.y + threadIdx.y;
 
-	// Normalize
 	if (idx < pages_count) {
 		d_page_probs[idx] /= d_page_ranks_sum[0];
 		if (d_pages[idx].dangling_node) {
 			atomicAdd(d_dangling_probs_sum, float(d_page_probs[idx]));
 		}
 	}
-
 }
 
-__global__ void page_rank_iteration(Page *d_pages,
+__global__ void run_page_rank_iteration(Page *d_pages,
 		double *d_page_probs,
 		int *d_edges_list,
 		int pages_count,
@@ -50,19 +48,17 @@ __global__ void page_rank_iteration(Page *d_pages,
 			int from = d_edges_list[i];
 			c_element += d_page_probs[from] / ( 1.0 * d_pages[from].out_links_count);
 		}
-		double oneprob= ((1 - alpha) * 1.0 / pages_count),
-				d = (alpha * 1.0 / pages_count * d_dangling_probs_sum[0]);
+
 		new_rank = ((1 - alpha) * 1.0 / pages_count)+
 				(alpha * c_element) +
 				(alpha * 1.0 / pages_count * d_dangling_probs_sum[0]);
-
-		atomicAdd(d_pages_ranks_sum, new_rank);
 	}
 
 	__syncthreads();
 
 	if (idx < pages_count) {
 		d_page_probs[idx] = new_rank;
+		atomicAdd(d_pages_ranks_sum, new_rank);
 	}
 }
 
@@ -74,21 +70,15 @@ void Kernel::run_kernel() {
 	if (block_size < 1024) {
 		dim3 dimGrid(1, grid_size);
 		dim3 dimBlock(1, block_size);
-		float zero = 0.0;
-		float a, b;
 
 		for (int i = 0; i < MAX_ITERATIONS; ++i) {
 			if (i > 0) {
-				cudaMemcpy(d_dangling_probs_sum, &zero, sizeof(float), cudaMemcpyHostToDevice);
-				iteration_preparation << <dimGrid, dimBlock>> >(d_pages, d_pages_probs, pages_count, d_pages_ranks_sum, d_dangling_probs_sum);
+				initialize_dangling_sum<<<1, 1>>>(d_dangling_probs_sum);
+				calculate_dangling_sum_and_normalize << <dimGrid, dimBlock>> >(d_pages, d_pages_probs, pages_count, d_pages_ranks_sum, d_dangling_probs_sum);
 			}
 
-			cudaMemcpy(&a, d_dangling_probs_sum, sizeof(float), cudaMemcpyDeviceToHost);
-			cudaMemcpy(&b, d_pages_ranks_sum, sizeof(float), cudaMemcpyDeviceToHost);
-
-			cudaMemcpy(d_pages_ranks_sum, &zero , sizeof(float), cudaMemcpyHostToDevice);
-			page_rank_iteration << < dimGrid, dimBlock >> > (d_pages, d_pages_probs, d_edges_list, pages_count, d_pages_ranks_sum, d_dangling_probs_sum, ALPHA);
-
+			initialize_pages_ranks_sum<<<1, 1>>>(d_pages_ranks_sum);
+			run_page_rank_iteration << < dimGrid, dimBlock >> > (d_pages, d_pages_probs, d_edges_list, pages_count, d_pages_ranks_sum, d_dangling_probs_sum, ALPHA);
 		}
 	} else {
 		cout << "Error exceeded the maximum value for threads in a block 1024" << endl;
@@ -96,11 +86,6 @@ void Kernel::run_kernel() {
 }
 
 void Kernel::allocate_data(Page *h_pages, double *h_pages_probs, int *h_edges_list) {
-	cout << "==============================================================" << endl;
-	cout << "DEBUGGING KERNEL" << endl;
-	cout << "==============================================================" << endl;
-	cout << "Pages Count: " << pages_count << " " << h_pages[0].out_links_count << endl;
-
 	float one = 1.0, zero = 0.0;
 
 	// Allocate memory at the gpu device

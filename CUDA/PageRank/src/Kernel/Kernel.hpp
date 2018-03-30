@@ -13,7 +13,7 @@
 
 #define MAX_ITERATIONS 100
 #define ALPHA 0.85
-#define MAX_BLOCK_SIZE 16
+#define MAX_BLOCK_SIZE 32
 
 namespace PageRank {
 
