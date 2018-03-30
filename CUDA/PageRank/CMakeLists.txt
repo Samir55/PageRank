@@ -13,23 +13,24 @@ set(
 
 # Specify include directories
 include_directories(
-    GraphReader
-    Kernel
-    Page
-    Timer
-    Utils
+    src/GraphReader
+    src/Kernel
+    src/Page
+    src/Timer
+    src/Utils
     )
 
 # For compilation ...
 # Specify target & source files to compile it from
 cuda_add_executable(
     PageRank
-    GraphReader/GraphReader.hpp
-    GraphReader/GraphReader.cpp
-    Kernel/Kernel.cu
-    Page/Page.hpp
-    Timer/GPUTimer.hpp
-    Utils/utils.hpp
+    src/Main.cpp
+    src/GraphReader/GraphReader.hpp
+    src/GraphReader/GraphReader.cpp
+    src/Kernel/Kernel.cu
+    src/Page/Page.hpp
+    src/Timer/GPUTimer.hpp
+    src/Utils/utils.hpp
     )
 
 # For linking ...
