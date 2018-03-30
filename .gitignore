@@ -5,3 +5,4 @@ images/
 *.xml
 out/*
 out/
+*.DS_Store
