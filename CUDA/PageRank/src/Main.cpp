@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 
 	cout << "DEBUGGING MAIN.CPP" << endl;
 	cout << "==============================================================" << endl;
-	cout << "Pages count: " << GraphReader::pages_count << " Edges count: " << GraphReader::edges_count << endl;
+	cout << "Pages count: " << GraphReader::pages_count << " Edges count: " << GraphReader::edges_count << " Dangling nodes count: " << h_dangling_nodes_count  << endl;
 
 	// Create page rank kernel object
 	Kernel page_rank(GraphReader::pages_count, GraphReader::edges_count);
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 	// Run PageRank algorithm
 	gpu_timer.start();
 
-	page_rank.run_kernel(h_dangling_nodes_count);
+	page_rank.run_kernel();
 
 	gpu_timer.stop();
 

@@ -26,6 +26,8 @@ private:
 	Page *d_pages;
 	double *d_pages_probs;
 	int *d_edges_list;
+	float *d_pages_ranks_sum;
+	float *d_dangling_probs_sum;
 
 public:
 	Kernel(int n, int e) : pages_count(n), edges_count(e), d_pages(NULL), d_pages_probs(NULL), d_edges_list(NULL) {}
@@ -34,7 +36,7 @@ public:
 
 	void allocate_data(Page *h_pages, double *h_pages_probs, int *edges_list);
 
-	void run_kernel(int dangling_nodes_count);
+	void run_kernel();
 
 	double *get_result();
 };
