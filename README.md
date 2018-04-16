@@ -8,9 +8,9 @@ Search Page Rank based on the following article ["How Google Finds Your Needle i
 
 ![](https://i.imgur.com/q7Rf98L.jpg?1)
 
-  * Cuda (Fast implementation) is found in /CUDA folder
-  * Cuda (Matrix Slow implementation) is found in /CUDA(MAtrices) folder
-  * Java optimized code is found in Java/src folder
+  * Cuda (Fast implementation) is found in "/CUDA" folder
+  * Cuda (Matrix Slow implementation) is found in "/CUDA(Matrices)" folder
+  * Java optimized code is found in "Java/src" folder
 
 # Todo:
 * Add Machine learning technique beside PageRank.
